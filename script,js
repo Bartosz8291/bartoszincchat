@@ -1,0 +1,39 @@
+const socket = new WebSocket('ws://localhost:3000');
+
+socket.onopen = function () {
+  console.log('WebSocket connection established.');
+};
+
+socket.onerror = function (error) {
+  console.error('WebSocket error:', error);
+};
+
+socket.onmessage = function (event) {
+  const message = JSON.parse(event.data);
+  displayMessage(message);
+};
+
+function sendMessage() {
+  const messageInput = document.getElementById("message-input");
+  const message = messageInput.value.trim();
+  
+  if (message === "") {
+    alert("Please enter a message.");
+    return;
+  }
+  
+  const messageObject = {
+    sender: 'Me',
+    message: message
+  };
+  
+  socket.send(JSON.stringify(messageObject));
+  messageInput.value = "";
+}
+
+function displayMessage(message) {
+  const chatMessages = document.getElementById("chat-messages");
+  const messageDiv = document.createElement("div");
+  messageDiv.textContent = `${message.sender}: ${message.message}`;
+  chatMessages.appendChild(messageDiv);
+}
